@@ -10,7 +10,6 @@ from util._validasi import ValidasiInput
 from util import dbutil
 import MySQLdb
 
-#ser = serial.Serial('/dev/ttyACM1', 9600)
 ser = 0
 
 class Saklar(wx.Frame):
@@ -18,8 +17,7 @@ class Saklar(wx.Frame):
         wx.Frame.__init__(self, parent, frame_id, "Saklar (Switch)", size=(400,450))
         self.db = dbutil.MySQL('localhost','root','k4g4t4u','lampu')
         panel = wx.Panel(self)
-        #ser = None
-
+       
         self.list_ctrlone = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
         self.list_ctrlone.InsertColumn(0, "No", width=30)
         self.list_ctrlone.InsertColumn(1, "Id lampu", width=100)
@@ -28,7 +26,7 @@ class Saklar(wx.Frame):
         self.isilistctrl()
 
         self.Bind(wx.EVT_LIST_ITEM_SELECTED, self._is_selected, self.list_ctrlone)
-        #insert items for idlampu
+      
         data = self.db.fetch_field("SELECT id_lampu FROM lampu ")
 
 

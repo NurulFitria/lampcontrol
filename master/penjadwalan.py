@@ -57,8 +57,6 @@ class Penjadwalan(wx.Frame):
 		
 		self.inIdJadwal.SetInsertionPoint(0)		
 		self.nonaktif()
-		#mengumpulkan semua textctrl
-		#self._all_textCtrl = [self.inIdJadwal, self.inIdLampu]
 		
 		#adding sizer
 		self.MainLayer = wx.BoxSizer(wx.VERTICAL)
@@ -66,7 +64,7 @@ class Penjadwalan(wx.Frame):
 		self.stextSz = wx.FlexGridSizer(cols = 2, hgap = 5, vgap = 5)
 		self.stextSz.AddGrowableCol(1)
 		self.btnSizer= wx.BoxSizer(wx.HORIZONTAL)
-		#self.radioSizer= wx.BoxSizer(wx.HORIZONTAL)
+		
 
 		self.MainLayer.Fit(self)
 		self.MainLayer.SetSizeHints(self)
@@ -87,8 +85,7 @@ class Penjadwalan(wx.Frame):
 		self.stextSz.Add(self.inSelesai, 0)
 		self.stextSz.Add(self.lbIdLampu, 0, wx.ALIGN_LEFT|wx.ALIGN_CENTER_VERTICAL)
 		self.stextSz.Add(self.inIdLampu, 0)
-		#self.radioSizer.Add(self.Status, 1, wx.EXPAND|wx.ALIGN_CENTER_HORIZONTAL)
-		#self.stextSz.Add(self.radioSizer, 0)
+
 		self.entrySizer.Add(self.stextSz, 0, wx.EXPAND|wx.ALL, 10)
 		
 		self.btnSizer.Add(self.BtnSave,0,wx.ALIGN_CENTER|wx.ALL, 10)
@@ -113,7 +110,7 @@ class Penjadwalan(wx.Frame):
 		hasil = self.db.fetch_all("Select penjadwalan.id_jadwal,penjadwalan.id_lampu,jadwal.hari,penjadwalan.status_jadwal \
 		    FROM penjadwalan,jadwal,lampu \
 			 WHERE penjadwalan.id_jadwal=jadwal.id_jadwal and penjadwalan.id_lampu=lampu.id_lampu")
-		#hasil = self.db.fetch_all(sql)
+		
 		str_hasil = str(hasil)
 		kosong = '()'
 		for enum, isi in enumerate(hasil):
@@ -164,8 +161,7 @@ class Penjadwalan(wx.Frame):
 				idlampu1 = self.db.fetch_one("Select id_lampu From penjadwalan where id_lampu=%s" % (idlampu))
 				hari1 = self.db.fetch_one("Select jadwal.hari From jadwal,penjadwalan \
 				        WHERE jadwal.id_jadwal=penjadwalan.id_jadwal and penjadwalan.id_lampu='%s'" % (idlampu))
-				#print idlampu1
-				#print hari1
+				
 				if idlampu1 == None:
 					self.db.commit_db("INSERT INTO penjadwalan VALUES ('%s', '%s','%s')" % (x[0], x[1],status))
 					wx.MessageDialog(self, 'Berhasil disimpan!', 'Berhasil',
@@ -175,7 +171,7 @@ class Penjadwalan(wx.Frame):
 						jml_jadwal = self.db.fetch_one("Select COUNT(jadwal.id_jadwal) from jadwal,penjadwalan \
 						             WHERE penjadwalan.id_jadwal=jadwal.id_jadwal and penjadwalan.id_lampu='%s' \
 						             and jadwal.hari='%s' " %(idlampu,hari))
-						#print str(jml_jadwal[0])
+						
 						if jml_jadwal[0] >= 2 :
 							wx.MessageDialog(self, 'Lampu sudah punya 2 penjadwalan', 'Error',wx.ICON_INFORMATION).ShowModal()
 						else:
@@ -184,20 +180,18 @@ class Penjadwalan(wx.Frame):
 						
 							mulai_awal = datetime.strptime(str(cek[0]),'%H:%M:%S')
 							selesai_awal = datetime.strptime(str(cek[1]),'%H:%M:%S')
-							#print 'mulai awal:',mulai_awal
-							#print 'selesai awal:',selesai_awal
+							
 
 							if (selesai >= mulai_awal and selesai <= selesai_awal) or (mulai <= selesai_awal and mulai >= mulai_awal) or (mulai <= mulai_awal and selesai >= selesai_awal):
 								wx.MessageDialog(self, 'Jadwal ini sudah ada di range jadwal sebelumnya', 'Error',
 									wx.ICON_INFORMATION).ShowModal()
 							else:
-								#print (mulai > mulai_awal and mulai < selesai_awal) and (selesai > mulai_awal and selesai < selesai_awal)
-								#print 'none 3'
+								
 								self.db.commit_db("INSERT INTO penjadwalan VALUES ('%s', '%s','%s')" % (x[0], x[1],status))
 								wx.MessageDialog(self, 'Berhasil disimpan!', 'Berhasil',
 								wx.ICON_INFORMATION).ShowModal()
 					else:
-						#print 'none 2'
+						
 						self.db.commit_db("INSERT INTO penjadwalan VALUES ('%s', '%s','%s')" % (x[0], x[1],status))
 						wx.MessageDialog(self, 'Berhasil disimpan!', 'Berhasil',
 							wx.ICON_INFORMATION).ShowModal()

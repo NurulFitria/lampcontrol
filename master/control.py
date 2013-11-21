@@ -12,7 +12,7 @@ from util import dbutil
 import MySQLdb
 
 ser = 0
-db = dbutil.MySQL('localhost','root','k4g4t4u','lampu')
+db = dbutil.MySQL('localhost','root','xxx','lampu')
 sched = Scheduler()
 sched.start()
 list_hari = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu']
@@ -54,15 +54,13 @@ def mati(nama_baru, ser, idlampu, idjadwal, index, hour, minute, second):
         waktu = time.strftime('%H:%M:%S')
         status = db.fetch_one("SELECT status from lampu WHERE id_lampu='%s'" %(idlampu))
         pin = db.fetch_one("SELECT pin from lampu WHERE id_lampu='%s'" %(idlampu))
-        #print status[0]
+
         if status[0] == 'on':
             try:
                 ser.write(str(pin[0]))
                 switch = 'off'
                 db.update_db("UPDATE lampu SET status='off' WHERE id_lampu='%s'" % (idlampu))
                 db.commit_db("INSERT INTO log VALUES('%s','%s','%s','%s','%s')" %  (tanggal,waktu,idlampu,switch,asal))
-                #db.update_db("UPDATE penjadwalan SET status_jadwal='Off' WHERE id_lampu='%s'and id_jadwal='%s'" %(idlampu,idjadwal))
-                #print 'Off', idlampu
             except:
                 wx.MessageDialog(self, 'Gagal mematikan lampu ', 'Informasi', wx.ICON_INFORMATION).ShowModal()
         else:
@@ -146,8 +144,7 @@ class Control(wx.Frame):
 		self.stextSz.Add(self.inSelesai, 0)
 		self.stextSz.Add(self.lbIdLampu, 0, wx.ALIGN_LEFT|wx.ALIGN_CENTER_VERTICAL)
 		self.stextSz.Add(self.inIdLampu, 0)
-		#self.radioSizer.Add(self.Status, 1, wx.EXPAND|wx.ALIGN_CENTER_HORIZONTAL)
-		#self.stextSz.Add(self.radioSizer, 0)
+		
 		self.entrySizer.Add(self.stextSz, 0, wx.EXPAND|wx.ALL, 10)
 
 		self.btnSizer.Add(self.BtnPlay,0,wx.ALIGN_CENTER|wx.ALL, 10)
@@ -231,7 +228,7 @@ class Control(wx.Frame):
 
 	def playall(self, event):
 		data = db.fetch_all("SELECT penjadwalan.id_jadwal,penjadwalan.id_lampu,jadwal.hari,jadwal.mulai,jadwal.selesai,penjadwalan.status_jadwal FROM penjadwalan, jadwal WHERE penjadwalan.id_jadwal=jadwal.id_jadwal AND penjadwalan.status_jadwal='Off'" )
-		#print data
+		
 		if data == ():
 			wx.MessageDialog(self, 'Penjadwalan sudah berjalan semua', 'Informasi',wx.ICON_INFORMATION).ShowModal()
 		else:
@@ -242,7 +239,7 @@ class Control(wx.Frame):
 				hari = a[2]
 				mulai = a[3]
 				selesai= a[4]
-				#print hari
+				
 				for i in list_hari:
 					if i == hari:
 						d = list_hari.index(i)
@@ -284,7 +281,7 @@ class Control(wx.Frame):
 
 	def stopall(self, event):
 		data = db.fetch_all("SELECT id_lampu,id_jadwal from penjadwalan WHERE status_jadwal='Running'")
-		#print data
+		
 		if data == ():
 			wx.MessageDialog(self, 'Tidak ada jadwal yang sedang berjalan', 'Informasi',wx.ICON_INFORMATION).ShowModal()
 		else:

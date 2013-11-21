@@ -227,7 +227,7 @@ class Validasi():
 		data = self.db.fetch_all("SELECT status_jadwal from penjadwalan where id_jadwal='%s'" % (self.IdJadwal))
 		for x in data:
 			status.append(x[0])
-		#print status
+		
 		if 'Running' in status:
 			alert = wx.MessageDialog(None,"Jadwal sedang berjalan","Error",wx.ID_OK)
 			alert.ShowModal()

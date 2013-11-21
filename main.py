@@ -16,10 +16,10 @@ from master import lamp, jadwal, penjadwalan, monitoring,saklar,log,control
 
 
 logging.basicConfig()
-CK = 'GJOnLjmLfAGrg5qgO7Cqg'
-CS = "3gNrz7B4pxQjSIbY81xUC61O9biIhYx15XJwzDpHbw"
-AT = "719356627-TLd9WqTD0SmGhkgRg9NSXt79oGnj7zSXgLcXS3Fk"
-ATS = "2LyqArOBeVpVYKHjjNtEhWYxBOwJwj77VENaR8N7Ls0"
+CK = 'xxx'
+CS = 'xxx'
+AT = 'xxx'
+ATS = 'xxx'
 quit = False
 
 def getSec(s):
@@ -89,7 +89,7 @@ class RibbonFrame(wx.Frame):
 
 		account_bar = RB.RibbonButtonBar(account_panel)
 		log_bar = RB.RibbonButtonBar(log_panel)
-		#self.play_bar = RB.RibbonButtonBar(play_panel)
+		
 		self.stop_bar = RB.RibbonButtonBar(stop_panel)
 
 		help_bar = RB.RibbonButtonBar(help_panel)
@@ -102,7 +102,7 @@ class RibbonFrame(wx.Frame):
 
 		account_bar.AddSimpleButton(ID_ACCOUNT, "Switch (Saklar)", wx.Bitmap(st._account), help_string="Switch (Saklar)")
 		log_bar.AddSimpleButton(ID_LOG, "Log (log)", wx.Bitmap(st._log), help_string="Log (Log)")
-		#self.play_bar.AddSimpleButton(ID_PLAY, "Start (Mulai)", wx.Bitmap(st._play), help_string="Play")
+		
 		self.stop_bar.AddSimpleButton(ID_STOP, "Control (Kontrol Penjadwalan)", wx.Bitmap(st._stop), help_string="Control (Kontrol Penjadwalan)")
 
 		help_bar.AddSimpleButton(ID_HELP, "Help (Bantuan)", wx.Bitmap(st._help), help_string="Help")
@@ -115,7 +115,7 @@ class RibbonFrame(wx.Frame):
 
 		account_bar.Bind(RB.EVT_RIBBONBUTTONBAR_CLICKED, self.OnAccount, id=ID_ACCOUNT)
 		log_bar.Bind(RB.EVT_RIBBONBUTTONBAR_CLICKED, self.OnLog, id=ID_LOG)
-		#self.play_bar.Bind(RB.EVT_RIBBONBUTTONBAR_CLICKED, self.OnPlay, id=ID_PLAY)
+		
 		self.stop_bar.Bind(RB.EVT_RIBBONBUTTONBAR_CLICKED, self.OnStop, id=ID_STOP)
 
 		help_bar.Bind(RB.EVT_RIBBONBUTTONBAR_CLICKED, self.OnHelp, id=ID_HELP)
@@ -130,7 +130,7 @@ class RibbonFrame(wx.Frame):
 		s.Add(self._ribbon, 1, wx.EXPAND| wx.GROW)
 		s.Add(panel, 3, wx.EXPAND| wx.GROW)
 		self.SetSizer(s)
-		#self.koneksi()
+		
 		if self.koneksi() == False:
 			exit()
 		else:
@@ -160,7 +160,6 @@ class RibbonFrame(wx.Frame):
 			auth = tweepy.OAuthHandler(CK, CS)
 			auth.set_access_token(AT, ATS)
 			self.api = tweepy.API(auth)
-			#print self.api.me().name
 			return True
 		except tweepy.error.TweepError:
 			wx.MessageDialog(self, 'Tidak ada sambungan internet ', 'Informasi', wx.ICON_INFORMATION).ShowModal()
@@ -281,7 +280,7 @@ class RibbonFrame(wx.Frame):
 					print 'mention id :', mention.id
 					print 'author :' , mention.author.screen_name
 					lastStatusProcessed = mention.id
-				#break
+				
 				if mention.id > lastStatusProcessed:
 					lastStatusProcessed = mention.id
 					print mention.author.id
@@ -302,31 +301,25 @@ class RibbonFrame(wx.Frame):
 		command = text.split(" ")
 		if command[0] == 'set':
 			msg = text.replace('set ','')
-			#print 'hilang kan set',msg
 			commands = msg.split('& ')
-			#print commands
 			for x in commands:
-				#print x
+				
 				self.set_exec(api, author, x)
 		elif command[0] == 'status':
-			msg = text.replace('status ','')
-			#print 'hilang kan status',msg
-			commands = msg.split('& ')
-			#print commands
-			for x in commands:
-				#print x
+			msg = text.replace('status ','')			
+			commands = msg.split('& ')			
+			for x in commands:				
 				self.status_exec(api, author, x)
 		else:
-			#print 'bukan set atau status'
 			api.update_status('@'+author + ' [%s] error command ' % (time.strftime("%Y-%m-%d %H:%M:%S")))
 
 ############# set exec
 	def set_exec(self, api, author, command):
 		command = command.split(" ")
 		n = len(command)
-		#print 'isi command',n
+
 		if n < 3 or n > 3 == True:
-			#print 'kurang dari 3 atau lebih'
+
 			api.update_status('@'+author+'[%s] error command ' % (time.strftime("%Y-%m-%d  %H:%M:%S")))
 		else:		
 			if command[0] == "lamp":
@@ -337,7 +330,7 @@ class RibbonFrame(wx.Frame):
 					switch = command[2]
 					pin = self.db.fetch_one("SELECT pin from lampu WHERE id_lampu='%s'" %(idlampu))
 					status = self.db.fetch_one("SELECT status from lampu WHERE id_lampu='%s'"%(idlampu))
-					#print status
+
 					if switch == 'on':
 						if status[0] == switch:
 							api.update_status('@'+author+'[%s] Lamp [%s] still on' % (time.strftime('%Y-%m-%d %H-%M-%S'), idlampu))
@@ -346,7 +339,7 @@ class RibbonFrame(wx.Frame):
 							self.isi_log(idlampu,switch)
 							self.update_status(idlampu,switch)
 							msg = '[%s] Success Turning %s lamp %s' % (time.strftime('%Y-%m-%d %H:%M:%S'), switch, idlampu)
-							#print msg
+
 							api.send_direct_message(screen_name=author, text=msg)
 
 					elif switch == 'off':
@@ -357,19 +350,19 @@ class RibbonFrame(wx.Frame):
 							self.isi_log(idlampu,switch)
 							self.update_status(idlampu,switch)
 							msg = '[%s] Success Turning %s lamp %s' % (time.strftime("%Y-%m-%d %H:%M:%S"),switch,idlampu)
-							#print msg
+
 							api.send_direct_message(screen_name=author, text=msg)
 					else:
-						#print 'bukan on atau off'
+
 						api.update_status('@'+author+'[%s] Command error ' % (time.strftime('%Y-%m-%d %H-%M-%S')))
 
 				elif command[1] == 'all':
 					self.set_all(api, author, command[2])
 				else:
-					#print 'bukan idlamp dan bukan all'
+
 					api.update_status('@'+author+'[%s] Command error ' % (time.strftime('%Y-%m-%d %H-%M-%S')))
 			else:
-				#print 'bukan lamp'
+
 				api.update_status('@'+author+'[%s] Command error ' % (time.strftime('%Y-%m-%d %H-%M-%S')))
 
 ########## status exec
@@ -378,9 +371,8 @@ class RibbonFrame(wx.Frame):
 		data = self.db.fetch_all("SELECT id_lampu,status from lampu")
 		command = command.split(" ")
 		n = len(command)
-		#print 'n =',n
+
 		if n < 2 or n > 2 == True:
-			#print 'kurang dari 2 atau lebih dari 2'
 			api.update_status('@'+author + '[%s] error command' % (time.strftime("%Y-%m-%d %H:%M:%S")))
 		else:
 			if command[0] == 'lamp':
@@ -389,14 +381,12 @@ class RibbonFrame(wx.Frame):
 						lampu = x[0]
 						status = x[1]
 						msg = '[%s] Status Lamp %s ' % (time.strftime("%Y-%m-%d %H:%M:%S"),lampu)+' '+status
-						#print msg
 						api.send_direct_message(screen_name=author, text=msg)
 					
 				elif command[1] in idlampu:
 					lamp_num = command[1]
 					status = self.db.fetch_one("SELECT status from lampu WHERE id_lampu='%s'" % (lamp_num))
 					msg = '[%s] Status Lamp %s' % (time.strftime("%Y-%m-%d %H:%M:%S"),lamp_num)+' ' + status[0]
-					#print msg
 					api.send_direct_message(screen_name=author, text=msg)
 
 				else:
@@ -407,14 +397,12 @@ class RibbonFrame(wx.Frame):
 	def set_all(self, api, author, switch):
 		data = self.db.fetch_all("SELECT id_lampu,pin,status from lampu")
 		for x in data:
-			#print 'lampu yang ke ',x[0]
 			if x[2] == switch:
 				api.update_status('@'+author+'[%s] Lamp %s still %s'  % (time.strftime('%Y-%m-%d %H-%M-%S'), x[0], switch))
 			else:
 				self.ser.write(str(x[1]))
 				self.isi_log(x[1],switch)
 				msg = '[%s] Success Turning %s lamp %s' % (time.strftime('%Y-%m-%d %H:%M:%S'), switch, x[0])
-				#print msg
 				self.update_status(x[0],switch)
 				api.send_direct_message(screen_name=author, text=msg)
 
