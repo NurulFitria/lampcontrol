@@ -60,7 +60,7 @@ class RibbonFrame(wx.Frame):
 	def __init__(self):
 		wx.Frame.__init__(self, None, -1, 'Sistem Penjadwalan dan Kendali lampu via Twitter', size=(1042,700))
 		self._ribbon = RB.RibbonBar(self, wx.ID_ANY)
-		self.db = dbutil.MySQL('localhost', 'root', 'k4g4t4u', 'lampu')					
+		self.db = dbutil.MySQL('localhost', 'xxx', 'xxx', 'lampu')					
 		self.ser = None
 		ser = None
 		self.api = None
